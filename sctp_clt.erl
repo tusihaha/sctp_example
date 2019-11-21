@@ -1,19 +1,20 @@
 -module(sctp_clt).
--export([start/0]).
+-export([start/1]).
 
-start() ->
+start(IP) ->
   {ok, Socket} = gen_sctp:open(),
   {ok, Assoc} =
   gen_sctp:connect(
     Socket,
-    {127, 0, 0, 1},
+    IP,
     8080,
     [{active, false}, {mode, binary}]
   ),
   loop(Assoc, Socket, 1000).
 
 loop(Assoc, Socket, N) when N > 0 ->
-  Data = <<"Hello server. Dont reply this">>,
+  Data = list_to_binary(lists:append(lists:flatten(io_lib:format("~p", [N])), " Hello server. Dont reply this")),
+  io:fwrite("~w~n", [Data]),
   gen_sctp:send(Socket, Assoc, 0, Data),
   loop(Assoc, Socket, N - 1);
 loop(_, Socket, 0) ->

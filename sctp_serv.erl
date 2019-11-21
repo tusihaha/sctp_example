@@ -1,11 +1,11 @@
 -module(sctp_serv).
--export([start/0]).
+-export([start/1]).
 
-start() ->
+start(IP) ->
   {ok, Socket} =
   gen_sctp:open(
     8080,
-    [{ip, {127,0,0,1}}, {active, false}, {mode, binary}, {reuseaddr, true}]
+    [{ip, IP}, {active, false}, {mode, binary}, {reuseaddr, true}]
   ),
   ok = gen_sctp:listen(Socket, 5),
   io:fwrite("Listen on port 8080 <Ctrl-c> to close\n"),
